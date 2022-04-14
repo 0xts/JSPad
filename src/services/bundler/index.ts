@@ -13,16 +13,20 @@ export const bundle = async (code: string) => {
     });
   }
 
-  const output = service.build({
-    entryPoints: ["index.js"],
-    bundle: true,
-    write: false,
-    plugins: [unpkgPathPlugin(), fetchPlugin(code)],
-    define: {
-      "process.env.NODE_ENV": '"production"',
-      global: "window",
-    },
-  });
+  try {
+    const output = await service.build({
+      entryPoints: ["index.js"],
+      bundle: true,
+      write: false,
+      plugins: [unpkgPathPlugin(), fetchPlugin(code)],
+      define: {
+        "process.env.NODE_ENV": '"production"',
+        global: "window",
+      },
+    });
 
-  return (await output).outputFiles[0].text;
+    return { code: output.outputFiles[0].text, err: "" };
+  } catch (err: any) {
+    return { code: "", err: `${err.message}` };
+  }
 };

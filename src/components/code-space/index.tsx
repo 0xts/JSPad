@@ -1,26 +1,36 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import CodeEditor from "./code-editor/code-editor";
 import CodePreview from "./code-preview/code-preview";
+import Resizable from "./resizable-window";
 import { bundle } from "../../services/bundler";
 
 const CodeSpace = () => {
   const [code, setCode] = useState("");
   const [input, setInput] = useState("");
+  const [err, setErr] = useState("");
 
-  const onClick = async () => {
-    const bundledCode = await bundle(input);
-    setCode(bundledCode);
-  };
+  useEffect(() => {
+    const timer = setTimeout(async () => {
+      const bundledCode = await bundle(input);
+      setCode(bundledCode.code);
+      setErr(bundledCode.err);
+    }, 750);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [input]);
 
   return (
-    <div>
-      <CodeEditor onChange={(value: string) => setInput(value)} />
-      <div>
-        <button onClick={onClick}>Submit</button>
+    <Resizable direction="vertical">
+      <div style={{ height: "100%", display: "flex", flexDirection: "row" }}>
+        <Resizable direction="horizontal">
+          <CodeEditor onChange={(value: string) => setInput(value)} />
+        </Resizable>
+        <CodePreview code={code} err={err}/>
       </div>
-      <CodePreview code={code} />
-    </div>
+    </Resizable>
   );
 };
 

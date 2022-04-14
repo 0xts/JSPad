@@ -1,12 +1,16 @@
 import * as esbuild from "esbuild-wasm";
 import { useState, useEffect, useRef } from "react";
 import ReactDOM from "react-dom";
+import "bulmaswatch/superhero/bulmaswatch.min.css";
+
 import { unpkgPathPlugin } from "./plugins/unpkg-path-plugin";
 import { fetchPlugin } from "./plugins/fetch-plugin";
+import CodeEditor from "./components/code-editor/code-editor";
+import CodePreview from "./components/code-preview/code-preview";
 
 const App = () => {
-  const iframe = useRef<any>();
   const ref = useRef<any>();
+  const [code, setCode] = useState("");
   const [input, setInput] = useState("");
 
   const startService = async () => {
@@ -24,8 +28,6 @@ const App = () => {
       return;
     }
 
-    iframe.current.srcdoc = html;
-
     const result = await ref.current.build({
       entryPoints: ["index.js"],
       bundle: true,
@@ -36,45 +38,16 @@ const App = () => {
         global: "window",
       },
     });
-
-    iframe.current.contentWindow.postMessage(result.outputFiles[0].text, "*");
+    setCode(result.outputFiles[0].text);
   };
-
-  const html = `
-   <html>
-   <head></head>
-   <body>
-    <div id="root"></div>
-    <script>
-      window.addEventListener("message", (event) => {
-        try {
-          eval(event.data);
-        } catch(err) {
-            const root = document.querySelector("#root");
-            root.innerHTML = '<div style="color: red;"><h4>Error</h4>' + err + '</div>';
-            console.error(err);
-        }
-    }, false);
-  </script>
-   </body>
-   </html>
-  `;
 
   return (
     <div>
-      <textarea
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-      ></textarea>
+      <CodeEditor onChange={(value: string) => setInput(value)} />
       <div>
         <button onClick={onClick}>Submit</button>
       </div>
-      <iframe
-        ref={iframe}
-        title="code-preview"
-        sandbox="allow-scripts"
-        srcDoc={html}
-      ></iframe>
+      <CodePreview code={code} />
     </div>
   );
 };

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 
 import CodeEditor from "./code-editor/code-editor";
 import CodePreview from "./code-preview/code-preview";
-import Resizable from "./resizable-window";
+import Resizable from "../resizable-window";
 import { bundle } from "../../services/bundler";
 
 const CodeSpace = () => {

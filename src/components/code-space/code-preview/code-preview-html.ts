@@ -5,10 +5,10 @@ export const html = `
     <div id="root"></div>
     <script>
       const handleError = (err) => {
-        console.error(err);
-        err = err.split(":");
+        const [type, message] = err.toString().split(":");
         const root = document.querySelector("#root");
-        root.innerHTML = '<div style="color: red;"><h4>err[0]</h4>' + err[1] + '</div>';
+        root.innerHTML = '<div style="color: red;"><h4>' + type + ':</h4>' + message + '</div>';
+        console.error(err);
       }
 
       window.addEventListener("error", (event) => {

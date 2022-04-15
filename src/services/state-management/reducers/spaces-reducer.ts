@@ -19,13 +19,13 @@ export const spaceReducer = produce(
   (
     state: SpacesState = initialState,
     action: Action
-  ): SpacesState | undefined => {
+  ): SpacesState => {
     switch (action.type) {
       case ActionType.DELETE_SPACE:
         delete state.data[action.payload.id];
         state.order = state.order.filter((id) => id !== action.payload.id);
         return state;
-      case ActionType.INSERT_SPACE_BEFORE:
+      case ActionType.INSERT_SPACE_AFTER:
         const space: Space = {
           id: rIdGen(),
           type: action.payload.type,
@@ -39,9 +39,9 @@ export const spaceReducer = produce(
         );
 
         if (indexToInsertAt < 0) {
-          state.order.push(space.id);
+          state.order.unshift(space.id);
         } else {
-          state.order.splice(indexToInsertAt, 0, space.id);
+          state.order.splice(indexToInsertAt + 1, 0, space.id);
         }
 
         return state;
@@ -65,4 +65,4 @@ export const spaceReducer = produce(
         return state;
     }
   }
-);
+,initialState);

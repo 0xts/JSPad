@@ -9,11 +9,12 @@ import "./syntax-highlight.css";
 
 interface EditorProps {
   onChange(value: string | undefined): void;
+  initialValue: string;
 }
 
 type Monaco = typeof monaco;
 
-const CodeEditor: React.FC<EditorProps> = ({ onChange }) => {
+const CodeEditor: React.FC<EditorProps> = ({ onChange, initialValue }) => {
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor>();
 
   const onEditorDidMount = (
@@ -65,7 +66,7 @@ const CodeEditor: React.FC<EditorProps> = ({ onChange }) => {
         onChange={(value, event) => {
           onChange(value);
         }}
-        defaultValue=""
+        defaultValue={initialValue}
         theme="vs-dark"
         language="javascript"
         height="100%"

@@ -1,6 +1,6 @@
 import {
   DeleteSpaceAction,
-  InsertSpaceBeforeAction,
+  InsertSpaceAfterAction,
   MoveSpaceAction,
   UpdateSpaceAction,
 } from ".";
@@ -16,12 +16,12 @@ export const updateSpace = (id: string, content: string): UpdateSpaceAction => {
     },
   };
 };
-export const insertSpaceBefore = (
-  id: string,
+export const insertSpaceAfter = (
+  id: string | null,
   type: SpaceType
-): InsertSpaceBeforeAction => {
+): InsertSpaceAfterAction => {
   return {
-    type: ActionType.INSERT_SPACE_BEFORE,
+    type: ActionType.INSERT_SPACE_AFTER,
     payload: {
       id,
       type,

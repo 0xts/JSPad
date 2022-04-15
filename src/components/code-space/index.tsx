@@ -1,34 +1,39 @@
-import { useState, useEffect } from "react";
-
 import CodeEditor from "./code-editor/code-editor";
 import CodePreview from "./code-preview/code-preview";
 import Resizable from "../resizable-window";
-import { bundle } from "../../services/bundler";
+import { Space } from "../../services/state-management";
+import { useAction } from "../../hooks/use-actions";
+import { useTypedSelector } from "../../hooks/use-typed-selector";
 
-const CodeSpace = () => {
-  const [code, setCode] = useState("");
-  const [input, setInput] = useState("");
-  const [err, setErr] = useState("");
+interface CodeSpaceProps {
+  space: Space;
+}
 
-  useEffect(() => {
-    const timer = setTimeout(async () => {
-      const bundledCode = await bundle(input);
-      setCode(bundledCode.code);
-      setErr(bundledCode.err);
-    }, 750);
+const CodeSpace: React.FC<CodeSpaceProps> = ({ space }) => {
+  const { updateSpace } = useAction();
 
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [input]);
+  const bundle = useTypedSelector((state) => {
+    return state.bundles[space.id]
+      ? state.bundles[space.id]
+      : { code: "", err: "" };
+  });
 
   return (
     <Resizable direction="vertical">
-      <div style={{ height: "100%", display: "flex", flexDirection: "row" }}>
+      <div
+        style={{
+          height: "calc(100% - 10px)",
+          display: "flex",
+          flexDirection: "row",
+        }}
+      >
         <Resizable direction="horizontal">
-          <CodeEditor onChange={(value: string) => setInput(value)} />
+          <CodeEditor
+            initialValue={space.content}
+            onChange={(value: string) => updateSpace(space.id, value)}
+          />
         </Resizable>
-        <CodePreview code={code} err={err}/>
+        <CodePreview code={bundle.code} err={bundle.err} />
       </div>
     </Resizable>
   );

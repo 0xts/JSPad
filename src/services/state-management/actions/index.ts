@@ -24,16 +24,28 @@ export interface UpdateSpaceAction {
   };
 }
 
-export interface InsertSpaceBeforeAction {
-  type: ActionType.INSERT_SPACE_BEFORE;
+export interface InsertSpaceAfterAction {
+  type: ActionType.INSERT_SPACE_AFTER;
   payload: {
     id: string | null;
     type: SpaceType;
   };
 }
 
+export interface BundleCreatedAction {
+  type: ActionType.BUNDLE_CREATED_ACTION;
+  payload: {
+    spaceId: string;
+    bundle: {
+      code: string;
+      err: string;
+    };
+  };
+}
+
 export type Action =
-  | InsertSpaceBeforeAction
+  | InsertSpaceAfterAction
   | MoveSpaceAction
   | DeleteSpaceAction
-  | UpdateSpaceAction;
+  | UpdateSpaceAction
+  | BundleCreatedAction;

@@ -1,12 +1,18 @@
 import { useState, useEffect, useRef } from "react";
 import MDEditor from "@uiw/react-md-editor";
 
+import { Space } from "../../services/state-management";
+import { useAction } from "../../hooks/use-actions";
 import "./markdown-space.css";
 
-const MarkdownSpace: React.FC = () => {
+interface MarkdownSpaceProps {
+  space: Space;
+}
+
+const MarkdownSpace: React.FC<MarkdownSpaceProps> = ({ space }) => {
   const [editing, setEditing] = useState(false);
-  const [value, setValue] = useState("# Header");
   const ref = useRef<HTMLDivElement | null>(null);
+  const { updateSpace } = useAction();
 
   useEffect(() => {
     const listener = (event: MouseEvent) => {
@@ -31,9 +37,9 @@ const MarkdownSpace: React.FC = () => {
     return (
       <div className="text-editor" ref={ref}>
         <MDEditor
-          value={value}
+          value={space.content}
           onChange={(v) => {
-            setValue(v || "");
+            updateSpace(space.id, v || "");
           }}
         />
       </div>
@@ -43,7 +49,7 @@ const MarkdownSpace: React.FC = () => {
   return (
     <div className="text-editor card" onClick={() => setEditing(true)}>
       <div className="card-content">
-        <MDEditor.Markdown source={value} />
+        <MDEditor.Markdown source={space.content} />
       </div>
     </div>
   );
